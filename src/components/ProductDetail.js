@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { fetchProducts } from "../api/api";
+import { CartContext } from "../context/CartContext";
 
 function ProductDetail() {
   const { id } = useParams();
+  const { addItemToCart } = useContext(CartContext);
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
@@ -19,38 +21,39 @@ function ProductDetail() {
 
   return (
     <section className="product-detail-page">
-  <div className="product-detail-container">
+      <div className="product-detail-container">
+        <div className="product-image-wrapper">
+          <img src={product.image} alt={product.name} />
+        </div>
 
-    <div className="product-image-wrapper">
-      <img src={product.image} alt={product.name} />
-    </div>
+        <div className="product-info-section">
+          <span className="product-category">
+            {product.category}
+          </span>
 
-    <div className="product-info-section">
-      <span className="product-category">
-        {product.category}
-      </span>
+          <h1 className="product-title">{product.name}</h1>
 
-      <h1 className="product-title">
-        {product.name}
-      </h1>
+          <p className="product-description">
+            {product.description}
+          </p>
 
-      <p className="product-description">
-        {product.description}
-      </p>
+          <div className="product-price">
+            ₹{product.price}
+          </div>
 
-      <div className="product-price">
-        ₹{product.price}
+          <div className="product-buttons">
+            <button className="btn-primary">Buy Now</button>
+
+            <button
+              className="btn-outline"
+              onClick={() => addItemToCart(product)}
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
       </div>
-
-      <div className="product-buttons">
-        <button className="btn-primary">Buy Now</button>
-        <button className="btn-outline">Add to Cart</button>
-      </div>
-    </div>
-
-  </div>
-</section>
-
+    </section>
   );
 }
 

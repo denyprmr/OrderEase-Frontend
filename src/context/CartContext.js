@@ -8,14 +8,12 @@ import {
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-
-  // 🔥 MUST HAVE THIS
   const [cartItems, setCartItems] = useState([]);
 
   // ================= ADD ITEM =================
   const addItemToCart = async (product) => {
+    const token = localStorage.getItem("accessToken"); // ✅ FIXED
 
-    const token = localStorage.getItem("token");
     if (!token) {
       alert("Please login first!");
       return;
@@ -29,11 +27,9 @@ export const CartProvider = ({ children }) => {
     }
 
     try {
-
       await addToCart(productId, 1);
 
       setCartItems((prev) => {
-
         const existingItem = prev.find(
           (item) => (item._id || item.id) === productId
         );
@@ -48,7 +44,6 @@ export const CartProvider = ({ children }) => {
 
         return [...prev, { ...product, quantity: 1 }];
       });
-
     } catch (error) {
       alert("Failed to add item");
     }
@@ -56,21 +51,19 @@ export const CartProvider = ({ children }) => {
 
   // ================= REMOVE =================
   const removeItemFromCart = async (id) => {
+    const token = localStorage.getItem("accessToken"); // ✅ FIXED
 
-    const token = localStorage.getItem("token");
     if (!token) {
       alert("Please login first!");
       return;
     }
 
     try {
-
       await removeFromCartAPI(id);
 
       setCartItems((prev) =>
         prev.filter((item) => (item._id || item.id) !== id)
       );
-
     } catch (error) {
       alert("Failed to remove item");
     }
@@ -78,7 +71,6 @@ export const CartProvider = ({ children }) => {
 
   // ================= INCREASE =================
   const increaseQuantity = async (id) => {
-
     const item = cartItems.find(
       (i) => (i._id || i.id) === id
     );
@@ -100,7 +92,6 @@ export const CartProvider = ({ children }) => {
 
   // ================= DECREASE =================
   const decreaseQuantity = async (id) => {
-
     const item = cartItems.find(
       (i) => (i._id || i.id) === id
     );
@@ -113,12 +104,9 @@ export const CartProvider = ({ children }) => {
       await removeFromCartAPI(id);
 
       setCartItems((prev) =>
-        prev.filter((i) =>
-          (i._id || i.id) !== id
-        )
+        prev.filter((i) => (i._id || i.id) !== id)
       );
     } else {
-
       await updateCartItem(id, newQty);
 
       setCartItems((prev) =>

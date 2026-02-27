@@ -46,12 +46,22 @@ function Navbar() {
 
         {/* 🛒 Cart Section */}
         <li>
-  <Link to="/cart" className="cart-container">
+  <div
+    className="cart-container"
+    onClick={() => {
+      if (!user) {
+        navigate("/login", { state: { from: "/cart" } });
+      } else {
+        navigate("/cart");
+      }
+    }}
+    style={{ cursor: "pointer" }}
+  >
     🛒
     {cartCount > 0 && (
       <span className="cart-badge">{cartCount}</span>
     )}
-  </Link>
+  </div>
 </li>
 
         {/* 👤 Auth Section */}
