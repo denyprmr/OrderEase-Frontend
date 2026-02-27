@@ -1,4 +1,6 @@
 import { createContext, useState } from "react";
+import { getToCart } from "../api/api";
+import { useEffect } from "react";
 import {
   addToCart,
   updateCartItem,
@@ -9,6 +11,18 @@ export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+  useEffect(() => {
+  loadCart();
+}, []);
+
+const loadCart = async () => {
+  try {
+    const response = await getToCart();
+    setCartItems(response.data.items);  // ✅ correct array
+  } catch (error) {
+    console.error("Error fetching cart:", error);
+  }
+};
 
   // ================= ADD ITEM =================
   const addItemToCart = async (product) => {
@@ -31,7 +45,7 @@ export const CartProvider = ({ children }) => {
 
       setCartItems((prev) => {
         const existingItem = prev.find(
-          (item) => (item._id || item.id) === productId
+          (item) => item.foodId?._id === productId || (item._id || item.id) === productId
         );
 
         if (existingItem) {
@@ -61,9 +75,9 @@ export const CartProvider = ({ children }) => {
     try {
       await removeFromCartAPI(id);
 
-      setCartItems((prev) =>
-        prev.filter((item) => (item._id || item.id) !== id)
-      );
+      /*setCartItems((prev) =>
+        prev.filter((item) => item._id !== id)
+      );*/
     } catch (error) {
       alert("Failed to remove item");
     }

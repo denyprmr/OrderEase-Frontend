@@ -9,16 +9,17 @@ function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const { cartItems } = useContext(CartContext);
+  // ✅ Safe default value
+  const { cartItems = [] } = useContext(CartContext) || {};
 
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // 🔥 Calculate total cart items dynamically
-  const cartCount = cartItems.reduce(
-    (total, item) => total + item.quantity,
+  // ✅ Fully safe cart count calculation
+  const cartCount = cartItems?.reduce(
+    (total, item) => total + (item.quantity || 1),
     0
-  );
+  ) || 0;
 
   const handleLogout = () => {
     logout();
@@ -46,23 +47,23 @@ function Navbar() {
 
         {/* 🛒 Cart Section */}
         <li>
-  <div
-    className="cart-container"
-    onClick={() => {
-      if (!user) {
-        navigate("/login", { state: { from: "/cart" } });
-      } else {
-        navigate("/cart");
-      }
-    }}
-    style={{ cursor: "pointer" }}
-  >
-    🛒
-    {cartCount > 0 && (
-      <span className="cart-badge">{cartCount}</span>
-    )}
-  </div>
-</li>
+          <div
+            className="cart-container"
+            onClick={() => {
+              if (!user) {
+                navigate("/login", { state: { from: "/cart" } });
+              } else {
+                navigate("/cart");
+              }
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            🛒
+            {cartCount > 0 && (
+              <span className="cart-badge">{cartCount}</span>
+            )}
+          </div>
+        </li>
 
         {/* 👤 Auth Section */}
         {user ? (

@@ -82,6 +82,27 @@ export const addToCart = async (productId, quantity) => {
   return response.json();
 };
 
+export const getToCart = async () => {
+  const token = localStorage.getItem("accessToken");
+
+  const response = await fetch("http://localhost:3000/api/cart", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch cart");
+  }
+
+  const data = await response.json();
+
+  console.log("Cart Data:", data);  // ✅ log actual data
+
+  return data;
+};
+
 // 🔥 UPDATE CART ITEM
 export const updateCartItem = async (foodId, quantity) => {
   const token = localStorage.getItem("accessToken");
