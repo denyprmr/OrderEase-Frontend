@@ -120,10 +120,10 @@ export const updateCartItem = async (foodId, quantity) => {
 };
 
 // 🔥 REMOVE FROM CART
-export const removeFromCartAPI = async (foodId) => {
+export const removeCartAPI = async () => {
   const token = localStorage.getItem("accessToken");
 
-  const res = await fetch(`http://localhost:3000/api/cart/${foodId}`, {
+  const res = await fetch(`http://localhost:3000/api/cart`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
