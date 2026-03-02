@@ -1,4 +1,4 @@
-import axiosInstance from "./axiosInstance";
+
 
 // PRODUCTS API
 export const fetchProducts = async () => {
@@ -107,7 +107,7 @@ export const getToCart = async () => {
 export const updateCartItem = async (foodId, quantity) => {
   const token = localStorage.getItem("accessToken");
 
-  const res = await fetch("http://localhost:3000/api/cart", {
+  const res = await fetch( `http://localhost:3000/api/cart/${foodId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

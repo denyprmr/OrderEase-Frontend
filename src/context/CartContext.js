@@ -1,5 +1,10 @@
 import { createContext, useState, useEffect } from "react";
-import { getToCart, addToCart, updateCartItem, removeItemFromCart as removeFromAPI } from "../api/api";
+import {
+  getToCart,
+  addToCart,
+  updateCartItem,
+
+} from "../api/api";
 
 export const CartContext = createContext();
 
@@ -21,8 +26,7 @@ export const CartProvider = ({ children }) => {
 
   // ================= ADD ITEM =================
   const addItemToCart = async (product) => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return alert("Please login first!");
+  if (!product) return alert("Please login first!");
 
     const productId = product._id || product.id;
     if (!productId) return alert("Product ID not found!");
@@ -30,22 +34,8 @@ export const CartProvider = ({ children }) => {
     try {
       await addToCart(productId, 1);
 
-      setCartItems((prev) => {
-        const existingItem = prev.find(
-          (item) => (item.foodId?._id === productId) || ((item._id || item.id) === productId)
-        );
-
-        if (existingItem) {
-          return prev.map((item) =>
-            (item._id || item.id) === productId
-              ? { ...item, quantity: (item.quantity || 1) + 1 }
-              : item
-          );
-        }
-
-        // Wrap the product in `food` to match CartPage
-        return [...prev, { cartItemId: productId, food: product, quantity: 1 }];
-      });
+      // 🔥 Always sync from backend
+      await loadCart();
     } catch (error) {
       console.error("Failed to add item:", error);
       alert("Failed to add item to cart.");
@@ -55,8 +45,11 @@ export const CartProvider = ({ children }) => {
   // ================= REMOVE ITEM =================
   const removeItemFromCart = async (cartItemId) => {
     try {
-      setCartItems((prev) => prev.filter((item) => item.cartItemId !== cartItemId));
-      //await removeFromAPI(cartItemId);
+      setCartItems((prev) =>
+        prev.filter((item) => item.cartItemId !== cartItemId)
+      );
+
+      // await removeFromAPI(cartItemId);
     } catch (error) {
       console.error("Error removing item:", error);
       alert("Could not remove item. Please try again.");
@@ -72,7 +65,9 @@ export const CartProvider = ({ children }) => {
     await updateCartItem(cartItemId, newQty);
 
     setCartItems((prev) =>
-      prev.map((i) => (i.cartItemId === cartItemId ? { ...i, quantity: newQty } : i))
+      prev.map((i) =>
+        i.cartItemId === cartItemId ? { ...i, quantity: newQty } : i
+      )
     );
   };
 
@@ -85,7 +80,9 @@ export const CartProvider = ({ children }) => {
     await updateCartItem(cartItemId, newQty);
 
     setCartItems((prev) =>
-      prev.map((i) => (i.cartItemId === cartItemId ? { ...i, quantity: newQty } : i))
+      prev.map((i) =>
+        i.cartItemId === cartItemId ? { ...i, quantity: newQty } : i
+      )
     );
   };
 
