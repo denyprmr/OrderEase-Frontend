@@ -1,15 +1,52 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
+import { placeOrderFromCart } from "../api/api";
+import { useNavigate } from "react-router-dom";
 import "./CartPage.css";
 
 function CartPage() {
-  const { cartItems = [], removeItemFromCart, increaseQuantity, decreaseQuantity } = useContext(CartContext);
 
-  // Total amount
-  const totalAmount = useMemo(
-    () => cartItems.reduce((total, item) => total + (item.food?.price || 0) * item.quantity, 0),
-    [cartItems]
+  const {
+    cartItems = [],
+    cartId, // ✅ make sure this exists in CartContext
+    removeItemFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+    loadCart,
+  } = useContext(CartContext);
+
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // ✅ Safe total calculation
+  const totalAmount = cartItems.reduce(
+    (total, item) =>
+      total + (item.food?.price || 0) * item.quantity,
+    0
   );
+
+  const handleBuyNow = async () => {
+    try {
+      setLoading(true);
+
+      await placeOrderFromCart(cartId); // ✅ pass cartId
+
+      alert("✅ Order placed successfully!");
+
+      if (loadCart) {
+        await loadCart(); // refresh cart
+      }
+
+      // optional redirect
+      // navigate("/orders");
+
+    } catch (error) {
+      console.error("Order Error:", error);
+      alert("❌ Order failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!cartItems.length) {
     return (
@@ -25,11 +62,12 @@ function CartPage() {
 
       {cartItems.map((item) => (
         <div key={item.cartItemId} className="cart-item">
+
           {/* Product Image */}
-          {item.food?.image ? (
+          {item.image ? (
             <img
-              src={`http://localhost:3000/api/${item.food.image}`}
-              alt={item.food.name}
+              src={`http://localhost:3000/api/${item.image}`}
+              alt={item.name}
               className="cart-image"
             />
           ) : (
@@ -37,33 +75,60 @@ function CartPage() {
           )}
 
           <div className="cart-details">
-            {/* Product Name */}
-            <h4 className="product-name">{item.food?.name || "Product Name"}</h4>
 
-            {/* Price */}
+            <h4 className="product-name">{item.name}</h4>
+
             <p className="product-price">₹{item.food?.price || 0}</p>
 
-            {/* Quantity Controls */}
             <div className="quantity-controls">
-              <button className="qty-btn" onClick={() => decreaseQuantity(item.cartItemId)}>−</button>
+              <button
+                className="qty-btn"
+                onClick={() =>
+                  decreaseQuantity(item.cartItemId, item.quantity)
+                }
+              >
+                −
+              </button>
+
               <span className="qty-value">{item.quantity}</span>
-              <button className="qty-btn" onClick={() => increaseQuantity(item.cartItemId)}>+</button>
+
+              <button
+                className="qty-btn"
+                onClick={() =>
+                  increaseQuantity(item.cartItemId, item.quantity)
+                }
+              >
+                +
+              </button>
             </div>
 
-            {/* Subtotal */}
-            <p className="subtotal">Subtotal: ₹{((item.food?.price || 0) * item.quantity).toFixed(2)}</p>
+            <p className="subtotal">
+              Subtotal: ₹{(item.food?.price || 0) * item.quantity}
+            </p>
 
-            {/* Remove Button */}
-            <button className="remove-btn" onClick={() => removeItemFromCart(item.cartItemId)}>
+            <button
+              className="remove-btn"
+              onClick={() =>
+                removeItemFromCart(item.cartItemId)
+              }
+            >
               Remove
             </button>
+
           </div>
         </div>
       ))}
 
-      {/* Total Section */}
       <div className="cart-total">
-        <h3>Total Amount: ₹{totalAmount.toFixed(2)}</h3>
+        <h3>Total Amount: ₹{totalAmount}</h3>
+
+        <button
+          className="buy-btn"
+          onClick={handleBuyNow}
+          disabled={loading}
+        >
+          {loading ? "Processing..." : "Buy Now"}
+        </button>
       </div>
     </div>
   );

@@ -1,5 +1,4 @@
 
-
 // PRODUCTS API
 export const fetchProducts = async () => {
   const response = await fetch("http://localhost:3000/api/public/menu");
@@ -131,4 +130,28 @@ export const removeCartAPI = async () => {
   });
 
   return res.json();
+};
+
+export const placeOrderFromCart = async (cartId) => {
+  const token = localStorage.getItem("accessToken");
+
+  const res = await fetch("http://localhost:3000/api/order/from-cart", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      "IdempotencyKey": cartId, // 👈 using cartId
+    },
+    body: JSON.stringify({
+      clearCart: true,
+    }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed to place order");
+  }
+
+  return data;
 };
