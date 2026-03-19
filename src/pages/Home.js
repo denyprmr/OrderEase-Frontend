@@ -1,30 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense, useMemo } from "react";
+import { debounce } from "../utils/debounce";
+
+// ✅ Keep above-the-fold components normal
 import Hero from "../components/Hero";
 import Features from "../components/Features";
-import Products from "../components/Products";
-import Testimonials from "../components/Testimonials";
-import CTA from "../components/CTA";
-import Categories from "../components/Categories";
+
+// ✅ Lazy load below-the-fold components
+const Testimonials = lazy(() => import("../components/Testimonials"));
+const CTA = lazy(() => import("../components/CTA"));
+const Categories = lazy(() => import("../components/Categories"));
+const Products = lazy(() => import("../components/Products"));
 
 function Home() {
-
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category);   // 🔥 this will trigger UI update
-  };
+  // ✅ Proper debounce (stable function)
+  const handleCategorySelect = useMemo(
+    () =>
+      debounce((category) => {
+        setSelectedCategory(category);
+      }, 300),
+    []
+  );
 
   return (
     <>
+      {/* ✅ Fast loading components */}
       <Hero />
       <Features />
-      <Testimonials />
-      <CTA />
 
-      <Categories onSelectCategory={handleCategorySelect} />
+      {/* ✅ Lazy sections (separate Suspense for better UX) */}
+      <Suspense fallback={<p>Loading...</p>}>
+        <Testimonials />
+      </Suspense>
 
-      <Products selectedCategory={selectedCategory} />
+      <Suspense fallback={<p>Loading...</p>}>
+        <CTA />
+      </Suspense>
 
+      <Suspense fallback={<p>Loading categories...</p>}>
+        <Categories onSelectCategory={handleCategorySelect} />
+      </Suspense>
+
+      <Suspense fallback={<p>Loading products...</p>}>
+        <Products selectedCategory={selectedCategory} />
+      </Suspense>
     </>
   );
 }

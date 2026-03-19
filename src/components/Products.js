@@ -1,10 +1,13 @@
-import React, { useContext } from "react";
+import React, { useContext, memo } from "react";
 import useProducts from "../hooks/useProducts";
 import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 
-function Products({ selectedCategory }) {
+// ✅ Image Lazy Loading Library
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
+function Products({ selectedCategory }) {
   const { products, loading, error } = useProducts(selectedCategory);
   const { addItemToCart } = useContext(CartContext);
   const navigate = useNavigate();
@@ -16,11 +19,11 @@ function Products({ selectedCategory }) {
 
     if (!token) {
       alert("Please login first!");
-      navigate("/login");   // 🔥 redirect to login
+      navigate("/login");
       return;
     }
 
-    addItemToCart(product); // only logged in user can call API
+    addItemToCart(product);
   };
 
   if (loading) return <p>Loading products...</p>;
@@ -32,18 +35,25 @@ function Products({ selectedCategory }) {
 
       <div className="product-grid">
         {products.map((product, index) => {
-
           const productId = product._id || product.id || index;
 
           return (
             <div key={productId} className="product-card">
-
+              
               <Link
                 to={`/product/${productId}`}
                 className="product-link"
               >
                 <div className="product-image">
-                  <img src={product.image} alt={product.name} />
+                  
+                  {/* ✅ Lazy Loaded Image with Blur Effect */}
+                  <LazyLoadImage
+                    src={product.image}
+                    alt={product.name}
+                    effect="blur"
+                    placeholderSrc="/placeholder.png" // optional fallback image
+                  />
+
                 </div>
 
                 <div className="product-info">
@@ -54,7 +64,7 @@ function Products({ selectedCategory }) {
                 </div>
               </Link>
 
-              {/* Updated Button */}
+              {/* ✅ Add to Cart Button */}
               <button
                 className="add-btn"
                 onClick={(e) => handleAddToCart(e, product)}
@@ -62,7 +72,6 @@ function Products({ selectedCategory }) {
               >
                 {token ? "Add To Cart" : "Login to Add"}
               </button>
-
             </div>
           );
         })}
@@ -71,4 +80,5 @@ function Products({ selectedCategory }) {
   );
 }
 
-export default Products;
+// ✅ Prevent unnecessary re-renders
+export default memo(Products);
