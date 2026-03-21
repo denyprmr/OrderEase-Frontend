@@ -1,37 +1,36 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { fetchProducts } from "../api/api";
 
-function useProducts() {
-
+const useProducts = (selectedCategory) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const hasFetched = useRef(false);   // 👈 important
+  const [error, setError] = useState("");
 
   useEffect(() => {
-
-    if (hasFetched.current) return;   // 👈 stop second call
-    hasFetched.current = true;
-
-    const getProducts = async () => {
+    const loadProducts = async () => {
       try {
         const data = await fetchProducts();
-        setProducts(data);
-      } 
-      catch (err) {
-        setError("Server not responding");
-      } 
-      finally {
+
+        // ✅ FILTER HERE
+        const filtered = selectedCategory
+          ? data.filter(
+              (item) =>
+                item.category?.toLowerCase() === selectedCategory
+            )
+          : data;
+
+        setProducts(filtered);
+      } catch (err) {
+        setError("Failed to load products");
+      } finally {
         setLoading(false);
       }
     };
 
-    getProducts();
-
-  }, []);
+    loadProducts();
+  }, [selectedCategory]);
 
   return { products, loading, error };
-}
+};
 
 export default useProducts;

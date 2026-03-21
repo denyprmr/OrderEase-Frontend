@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import "./App.css";
+import ChangePassword from "./pages/ChangePassword";
+import Orders from "./pages/Orders";
 
 import { lazy, Suspense } from "react";
 
@@ -38,6 +40,8 @@ function Layout() {
     <Route path="/login" element={<LoginPage />} />
     <Route path="/forgot-password" element={<ForgotPassword />} />
     <Route path="/signup" element={<Signup />} />
+    <Route path="/change-password" element={<ChangePassword />} />
+    <Route path="/orders" element={<Orders />} />
 
     {/* 🔐 Protected Routes */}
     <Route

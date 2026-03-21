@@ -12,7 +12,7 @@ function Products({ selectedCategory }) {
   const { addItemToCart } = useContext(CartContext);
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
 
   const handleAddToCart = (e, product) => {
     e.stopPropagation();

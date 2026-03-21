@@ -155,3 +155,67 @@ export const placeOrderFromCart = async (cartId) => {
 
   return data;
 };
+
+// 🔐 Get Token helper
+const getToken = () => localStorage.getItem("accessToken");
+
+// 👤 GET PROFILE
+export const getProfile = async () => {
+  const res = await fetch("http://localhost:3000/api/user/profile", {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch profile");
+
+  return res.json();
+};
+
+// ✏️ UPDATE PROFILE
+export const updateProfile = async (data) => {
+  const res = await fetch("http://localhost:3000/api/user/profile", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) throw new Error("Profile update failed");
+
+  return res.json();
+};
+
+// 🔒 UPDATE PASSWORD
+export const updatePassword = async (data) => {
+  const res = await fetch("http://localhost:3000/api/user/password", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) throw new Error("Password update failed");
+
+  return res.json();
+};
+
+// 📦 GET USER ORDERS
+export const getUserOrders = async () => {
+  const res = await fetch(
+    "http://localhost:3000/api/user/orders?page=1&limit=10",
+    {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
+
+  if (!res.ok) throw new Error("Failed to fetch orders");
+
+  return res.json();
+};
