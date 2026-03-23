@@ -1,4 +1,3 @@
-
 // PRODUCTS API
 export const fetchProducts = async () => {
   const response = await fetch("http://localhost:3000/api/public/menu");
@@ -11,8 +10,6 @@ export const fetchProducts = async () => {
 
   return Array.isArray(data) ? data : data.data;
 };
-
-
 
 // CATEGORIES API
 export const fetchCategories = async () => {
@@ -32,9 +29,9 @@ export const signupUser = async (userData) => {
   const response = await fetch("http://localhost:3000/api/auth/signup", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(userData)
+    body: JSON.stringify(userData),
   });
 
   if (!response.ok) {
@@ -71,16 +68,22 @@ export const addToCart = async (productId, quantity) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,  // 🔥 IMPORTANT
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
       foodId: productId,
       quantity,
     }),
   });
+
+  if (!response.ok) {
+    throw new Error("Failed to add to cart");
+  }
+
   return response.json();
 };
 
+// 🔥 GET CART (FIXED)
 export const getToCart = async () => {
   const token = localStorage.getItem("accessToken");
 
@@ -97,29 +100,54 @@ export const getToCart = async () => {
 
   const data = await response.json();
 
-  console.log("Cart Data:", data);  // ✅ log actual data
+  console.log("Cart Data:", data);
 
-  return data;
+  // ✅ ALWAYS RETURN ARRAY
+  return data?.data?.items || data?.data || [];
 };
 
 // 🔥 UPDATE CART ITEM
 export const updateCartItem = async (foodId, quantity) => {
   const token = localStorage.getItem("accessToken");
 
-  const res = await fetch( `http://localhost:3000/api/cart/${foodId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ foodId, quantity }),
-  });
+  const res = await fetch(
+    `http://localhost:3000/api/cart/`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ foodId, quantity }),
+    }
+  );
+
+  if (!res.ok) throw new Error("Failed to update cart");
 
   return res.json();
 };
 
-// 🔥 REMOVE FROM CART
-export const removeCartAPI = async () => {
+// 🔥 REMOVE SINGLE ITEM (FIXED)
+export const removeCartItem = async (foodId) => {
+  const token = localStorage.getItem("accessToken");
+
+  const res = await fetch(
+    `http://localhost:3000/api/cart?foodId=${foodId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!res.ok) throw new Error("Failed to remove item");
+
+  return res.json();
+};
+
+// 🔥 CLEAR CART (KEEP IF NEEDED)
+export const clearCart = async () => {
   const token = localStorage.getItem("accessToken");
 
   const res = await fetch(`http://localhost:3000/api/cart`, {
@@ -132,7 +160,8 @@ export const removeCartAPI = async () => {
   return res.json();
 };
 
-export const placeOrderFromCart = async (cartId) => {
+// 🔥 PLACE ORDER (FIXED)
+export const placeOrderFromCart = async () => {
   const token = localStorage.getItem("accessToken");
 
   const res = await fetch("http://localhost:3000/api/order/from-cart", {
@@ -140,7 +169,6 @@ export const placeOrderFromCart = async (cartId) => {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      "IdempotencyKey": cartId, // 👈 using cartId
     },
     body: JSON.stringify({
       clearCart: true,
