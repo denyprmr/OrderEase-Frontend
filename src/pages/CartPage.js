@@ -5,10 +5,8 @@ import { useNavigate } from "react-router-dom";
 import "./CartPage.css";
 
 function CartPage() {
-
   const {
     cartItems = [],
-    cartId, // ✅ make sure this exists in CartContext
     removeItemFromCart,
     increaseQuantity,
     decreaseQuantity,
@@ -18,36 +16,34 @@ function CartPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // ✅ Safe total calculation
+  // ✅ Total calculation
   const totalAmount = cartItems.reduce(
     (total, item) =>
-      total + (item.food?.price || 0) * item.quantity,
+      total + (item.food?.price || 0) * (item.quantity || 0),
     0
   );
 
+  // ✅ Place Order
   const handleBuyNow = async () => {
     try {
       setLoading(true);
 
-      await placeOrderFromCart(cartId); // ✅ pass cartId
+      await placeOrderFromCart();
 
       alert("✅ Order placed successfully!");
 
-      if (loadCart) {
-        await loadCart(); // refresh cart
-      }
+      await loadCart(); // refresh cart
 
-      // optional redirect
-      // navigate("/orders");
-
+      navigate("/orders");
     } catch (error) {
       console.error("Order Error:", error);
-      alert("❌ Order failed");
+      alert(error.message || "❌ Order failed");
     } finally {
       setLoading(false);
     }
   };
 
+  // ✅ Empty cart
   if (!cartItems.length) {
     return (
       <div className="cart-page">
@@ -60,65 +56,70 @@ function CartPage() {
     <div className="cart-page">
       <h2 className="cart-title">Your Shopping Cart</h2>
 
-      {cartItems.map((item) => (
-        <div key={item.cartItemId} className="cart-item">
+      {cartItems.map((item) => {
+        const itemId = item.foodId; // ✅ correct ID
+        
+        return (
+          <div key={itemId} className="cart-item">
+            {/* ✅ Image */}
+            {item.food?.image ? (
+              <img
+                src={item.food.image}
+                alt={item.food.name}
+                className="cart-image"
+              />
+            ) : (
+              <div className="cart-image placeholder">No Image</div>
+            )}
 
-          {/* Product Image */}
-          {item.image ? (
-            <img
-              src={`http://localhost:3000/api/${item.image}`}
-              alt={item.name}
-              className="cart-image"
-            />
-          ) : (
-            <div className="cart-image placeholder">No Image</div>
-          )}
+            <div className="cart-details">
+              <h4 className="product-name">{item.food?.name}</h4>
 
-          <div className="cart-details">
+              <p className="product-price">
+                ₹{item.food?.price || 0}
+              </p>
 
-            <h4 className="product-name">{item.name}</h4>
+              {/* ✅ Quantity Controls */}
+              <div className="quantity-controls">
+                <button
+                  className="qty-btn"
+                  onClick={() =>
+                    decreaseQuantity(itemId, item.quantity)
+                  }
+                >
+                  −
+                </button>
 
-            <p className="product-price">₹{item.food?.price || 0}</p>
+                <span className="qty-value">{item.quantity}</span>
 
-            <div className="quantity-controls">
+                <button
+                  className="qty-btn"
+                  onClick={() =>
+                    increaseQuantity(itemId, item.quantity)
+                  }
+                >
+                  +
+                </button>
+              </div>
+
+              <p className="subtotal">
+                Subtotal: ₹
+                {(item.food?.price || 0) * (item.quantity || 0)}
+              </p>
+
+              {/* ✅ Remove */}
               <button
-                className="qty-btn"
-                onClick={() =>
-                  decreaseQuantity(item.cartItemId, item.quantity)
-                }
+                className="remove-btn"
+                onClick={() => removeItemFromCart(itemId)}
               >
-                −
-              </button>
-
-              <span className="qty-value">{item.quantity}</span>
-
-              <button
-                className="qty-btn"
-                onClick={() =>
-                  increaseQuantity(item.cartItemId, item.quantity)
-                }
-              >
-                +
+                Remove
               </button>
             </div>
-
-            <p className="subtotal">
-              Subtotal: ₹{(item.food?.price || 0) * item.quantity}
-            </p>
-
-            <button
-              className="remove-btn"
-              onClick={() =>
-                removeItemFromCart(item.cartItemId)
-              }
-            >
-              Remove
-            </button>
-
           </div>
-        </div>
-      ))}
+        );
+      })}
 
+      {/* ✅ Total */}
       <div className="cart-total">
         <h3>Total Amount: ₹{totalAmount}</h3>
 
