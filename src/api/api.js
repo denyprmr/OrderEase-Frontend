@@ -247,3 +247,27 @@ export const getUserOrders = async () => {
 
   return res.json();
 };
+// Checkout API with Idempotency
+export const checkoutOrder = async (payload = {}, idempotencyKey) => {
+  const token = localStorage.getItem("accessToken");
+
+  const res = await fetch("http://localhost:3000/api/order/checkout", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      ...payload,
+      idempotencyKey, // 🔥 FIX HERE
+    }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Checkout failed");
+  }
+
+  return data;
+};

@@ -44,22 +44,22 @@ export const CartProvider = ({ children }) => {
 
   // ✅ Increase quantity (FIXED + safe)
   const increaseQuantity = async (foodId, currentQty) => {
+  const newQty = currentQty + 1;
+
+  // optimistic UI
+  setCartItems((prev) =>
+    prev.map((item) =>
+      item.foodId === foodId
+        ? { ...item, quantity: newQty }
+        : item
+    )
+  );
+
   try {
-    const qty = Number(currentQty);
-
-    if (isNaN(qty) || qty < 0) {
-      console.error("Invalid quantity:", currentQty);
-      return;
-    }
-
-    const newQty = qty + 1;
-
-    console.log("Increase:", foodId, newQty);
-
     await updateCartItem(foodId, newQty);
-    await loadCart();
   } catch (err) {
-    console.error("Increase Error:", err);
+    console.error(err);
+    loadCart(); // rollback
   }
 };
 

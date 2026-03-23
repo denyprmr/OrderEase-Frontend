@@ -1,7 +1,8 @@
 import React, { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
-import { placeOrderFromCart } from "../api/api";
+import { checkoutOrder } from "../api/api";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import "./CartPage.css";
 
 function CartPage() {
@@ -24,24 +25,33 @@ function CartPage() {
   );
 
   // ✅ Place Order
-  const handleBuyNow = async () => {
-    try {
-      setLoading(true);
 
-      await placeOrderFromCart();
+const handleBuyNow = async () => {
+  if (loading) return;
 
-      alert("✅ Order placed successfully!");
+  try {
+    setLoading(true);
 
-      await loadCart(); // refresh cart
+    const idempotencyKey = uuidv4(); // 🔥 generate
 
-      navigate("/orders");
-    } catch (error) {
-      console.error("Order Error:", error);
-      alert(error.message || "❌ Order failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+    await checkoutOrder(
+      {
+        paymentMethod: "COD",
+      },
+      idempotencyKey
+    );
+
+    alert("✅ Order placed successfully!");
+
+    await loadCart();
+    navigate("/orders");
+  } catch (error) {
+    console.error("Checkout Error:", error);
+    alert(error.message || "❌ Order failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
   // ✅ Empty cart
   if (!cartItems.length) {
