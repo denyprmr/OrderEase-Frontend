@@ -66,7 +66,7 @@ function Products({ selectedCategory }) {
 
               {/* ✅ Add to Cart Button */}
               <button
-                className="add-btn"
+                className="btn btn-primary"
                 onClick={(e) => handleAddToCart(e, product)}
                 disabled={!token}
               >

@@ -7,7 +7,15 @@ function ProductDetail() {
   const { id } = useParams();
   const { addItemToCart } = useContext(CartContext);
   const [product, setProduct] = useState(null);
-
+  
+const handleBuyNow = async () => {
+  try {
+    await addItemToCart(product); // same logic as cart
+    window.location.href = "/cart"; // redirect
+  } catch (err) {
+    console.error(err);
+  }
+};
   useEffect(() => {
     fetchProducts().then((data) => {
       const foundProduct = data.find(
@@ -42,10 +50,15 @@ function ProductDetail() {
           </div>
 
           <div className="product-buttons">
-            <button className="btn-primary">Buy Now</button>
+            <button
+  className="btn btn-primary"
+  onClick={handleBuyNow}
+>
+  Buy Now
+</button>
 
             <button
-              className="btn-outline"
+              className="btn btn-primary"
               onClick={() => addItemToCart(product)}
             >
               Add to Cart

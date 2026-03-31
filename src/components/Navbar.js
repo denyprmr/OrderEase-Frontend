@@ -75,7 +75,7 @@ function Navbar() {
             </li>
 
             <li>
-              <button className="nav-btn" onClick={handleLogout}>
+              <button className="btn btn-primary" onClick={handleLogout}>
                 Logout
               </button>
             </li>
@@ -83,7 +83,7 @@ function Navbar() {
         ) : (
           <li>
             <button
-              className="nav-btn"
+              className="btn btn-primary"
               onClick={() => navigate("/login")}
             >
               Login

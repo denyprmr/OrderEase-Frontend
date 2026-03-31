@@ -12,14 +12,17 @@ export const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
 
-  // ✅ Load cart
+  // ✅ Load cart (FIXED: normalize quantity)
   const loadCart = async () => {
     try {
       const res = await getToCart();
 
-      console.log("Cart Response:", res);
+      const normalized = (Array.isArray(res) ? res : []).map((item) => ({
+        ...item,
+        quantity: Number(item.quantity) || 0, // 🔥 FIX
+      }));
 
-      setCartItems(Array.isArray(res) ? res : []);
+      setCartItems(normalized);
     } catch (err) {
       console.error("Load Cart Error:", err);
       setCartItems([]);
@@ -42,57 +45,70 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // ✅ Increase quantity (FIXED + safe)
+  // ✅ Increase quantity (FIXED + Optimistic)
   const increaseQuantity = async (foodId, currentQty) => {
-  const newQty = currentQty + 1;
+    const qty = Number(currentQty) || 0;
+    const newQty = qty + 1;
 
-  // optimistic UI
-  setCartItems((prev) =>
-    prev.map((item) =>
-      item.foodId === foodId
-        ? { ...item, quantity: newQty }
-        : item
-    )
-  );
+    // 🔥 optimistic UI
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.foodId === foodId
+          ? { ...item, quantity: newQty }
+          : item
+      )
+    );
 
-  try {
-    await updateCartItem(foodId, newQty);
-  } catch (err) {
-    console.error(err);
-    loadCart(); // rollback
-  }
-};
-
-  // ✅ Decrease quantity (FIXED + safe)
-  const decreaseQuantity = async (foodId, currentQty) => {
     try {
-      const qty = Number(currentQty);
-
-      if (qty <= 1) {
-        await removeItemFromCart(foodId);
-        return;
-      }
-
-      const newQty = qty - 1;
-
-      console.log("Decrease:", foodId, newQty);
-
       await updateCartItem(foodId, newQty);
-      await loadCart();
     } catch (err) {
-      console.error("Decrease Error:", err);
+      console.error("Increase Error:", err);
+      loadCart(); // rollback
     }
   };
 
-  // ✅ Remove item
-  const removeItemFromCart = async (id) => {
-    try {
-      console.log("Remove:", id);
+  // ✅ Decrease quantity (FIXED + Optimistic)
+  const decreaseQuantity = async (foodId, currentQty) => {
+    const qty = Number(currentQty) || 0;
 
+    if (qty <= 1) {
+      await removeItemFromCart(foodId);
+      return;
+    }
+
+    const newQty = qty - 1;
+
+    // 🔥 optimistic UI
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.foodId === foodId
+          ? { ...item, quantity: newQty }
+          : item
+      )
+    );
+
+    try {
+      await updateCartItem(foodId, newQty);
+    } catch (err) {
+      console.error("Decrease Error:", err);
+      loadCart(); // rollback
+    }
+  };
+
+  // ✅ Remove item (Optimistic)
+  const removeItemFromCart = async (id) => {
+    const prevItems = [...cartItems];
+
+    // 🔥 optimistic remove
+    setCartItems((prev) =>
+      prev.filter((item) => item.foodId !== id)
+    );
+
+    try {
       await removeCartItem(id);
-      await loadCart();
     } catch (err) {
       console.error("Remove Error:", err);
+      setCartItems(prevItems); // rollback
     }
   };
 

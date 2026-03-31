@@ -235,7 +235,7 @@ export const updatePassword = async (data) => {
 // 📦 GET USER ORDERS
 export const getUserOrders = async () => {
   const res = await fetch(
-    "http://localhost:3000/api/user/orders?page=1&limit=10",
+    "http://localhost:3000/api/user/order",
     {
       headers: {
         Authorization: `Bearer ${getToken()}`,

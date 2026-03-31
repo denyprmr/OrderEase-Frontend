@@ -1,3 +1,54 @@
+:root {
+  /* COLORS */
+  --primary: #0ea5e9;
+  --secondary: #6366f1;
+  --danger: #ef4444;
+  --text: #0f172a;
+  --muted: #64748b;
+  --bg: #f8fafc;
+
+  /* SPACING SCALE */
+  --space-xs: 6px;
+  --space-sm: 10px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+
+  /* FONT SCALE */
+  --text-sm: 14px;
+  --text-md: 16px;
+  --text-lg: 20px;
+  --text-xl: 32px;
+
+  /* BORDER */
+  --radius: 12px;
+  --radius-lg: 20px;
+
+  /* SHADOW */
+  --shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+}
+
+.p-1 { padding: var(--space-1); }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-5 { padding: var(--space-5); }
+.p-6 { padding: var(--space-6); }
+
+.px-4 { padding-left: var(--space-4); padding-right: var(--space-4); }
+.py-4 { padding-top: var(--space-4); padding-bottom: var(--space-4); }
+
 /* RESET */
 * {
   margin: 0;
@@ -556,4 +607,34 @@ body {
   color: white;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: var(--text-md);
+  transition: 0.25s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  box-shadow: var(--shadow);
 }

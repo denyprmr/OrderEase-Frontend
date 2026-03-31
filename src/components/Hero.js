@@ -9,7 +9,7 @@ function Hero() {
           OrderEase helps you discover premium products,
           seamless checkout, and lightning fast delivery.
         </p>
-        <button className="primary-btn">Start Shopping</button>
+        <button className="btn btn-primary">Start Shopping</button>
       </div>
     </section>
   );

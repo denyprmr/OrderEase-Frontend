@@ -92,9 +92,9 @@ const handleBuyNow = async () => {
               {/* ✅ Quantity Controls */}
               <div className="quantity-controls">
                 <button
-                  className="qty-btn"
+                  className="btn btn-primary"
                   onClick={() =>
-                    decreaseQuantity(itemId, item.quantity)
+                    decreaseQuantity(itemId, Number(item.quantity))
                   }
                 >
                   −
@@ -103,9 +103,9 @@ const handleBuyNow = async () => {
                 <span className="qty-value">{item.quantity}</span>
 
                 <button
-                  className="qty-btn"
+                  className="btn btn-primary"
                   onClick={() =>
-                    increaseQuantity(itemId, item.quantity)
+                   increaseQuantity(itemId, Number(item.quantity))
                   }
                 >
                   +
@@ -119,7 +119,7 @@ const handleBuyNow = async () => {
 
               {/* ✅ Remove */}
               <button
-                className="remove-btn"
+                className="btn btn-danger"
                 onClick={() => removeItemFromCart(itemId)}
               >
                 Remove
@@ -134,7 +134,7 @@ const handleBuyNow = async () => {
         <h3>Total Amount: ₹{totalAmount}</h3>
 
         <button
-          className="buy-btn"
+          className="btn btn-primary"
           onClick={handleBuyNow}
           disabled={loading}
         >
