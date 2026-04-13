@@ -189,11 +189,22 @@ const getToken = () => localStorage.getItem("accessToken");
 
 // 👤 GET PROFILE
 export const getProfile = async () => {
+  const token = localStorage.getItem("accessToken");
+
   const res = await fetch("http://localhost:3000/api/user/profile", {
+    method: "GET",
     headers: {
-      Authorization: `Bearer ${getToken()}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
+
+  // 🔥 HANDLE 401 PROPERLY
+  if (res.status === 401) {
+    localStorage.removeItem("accessToken");
+    window.location.href = "/login";
+    return;
+  }
 
   if (!res.ok) throw new Error("Failed to fetch profile");
 

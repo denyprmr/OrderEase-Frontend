@@ -7,14 +7,17 @@ function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  // 🔹 State
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // 🔹 Handle Login Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!email || !password) {
+    // ✅ Validation
+    if (!email.trim() || !password.trim()) {
       alert("Please fill all fields");
       return;
     }
@@ -22,14 +25,27 @@ function LoginPage() {
     try {
       setLoading(true);
 
-      // 🔥 Call AuthContext login function
-      await login(email, password);
+      // 🔥 Call AuthContext login
+      const response = await login(email, password);
 
-      // ✅ Redirect after successful login
-      navigate("/");
+      console.log("Login Success:", response);
+
+      // ✅ Extra safety check (token must exist)
+      const token = localStorage.getItem("accessToken");
+
+      if (!token) {
+        throw new Error("Token not found after login");
+      }
+
+      // ✅ Redirect after success
+      navigate("/profile");
+
     } catch (err) {
       console.error("Login Error:", err);
-      alert("Invalid Email or Password ❌");
+
+      alert(
+        err?.message || "Invalid Email or Password ❌"
+      );
     } finally {
       setLoading(false);
     }
@@ -41,33 +57,43 @@ function LoginPage() {
         <h2>Welcome Back 👋</h2>
 
         <form onSubmit={handleSubmit}>
+          {/* Email */}
           <div className="input-group">
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
             />
             <label>Email Address</label>
           </div>
 
+          {/* Password */}
           <div className="input-group">
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
             />
             <label>Password</label>
           </div>
 
-          <button className="login-btn" type="submit" disabled={loading}>
+          {/* Submit Button */}
+          <button
+            className="login-btn"
+            type="submit"
+            disabled={loading}
+          >
             {loading ? "Logging in..." : "Login"}
           </button>
 
           <br />
           <br />
 
+          {/* Links */}
           <p
             className="forgot-link"
             onClick={() => navigate("/forgot-password")}
