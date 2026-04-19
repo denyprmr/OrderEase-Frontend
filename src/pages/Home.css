@@ -211,6 +211,302 @@
   color: white;
 }
 
-.btn:hover {
+.btn:hover {/* ===============================
+   DESIGN SYSTEM (Single Source of Truth)
+================================= */
+:root {
+  /* Colors */
+  --primary: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-gradient: linear-gradient(45deg, #3b82f6, #2563eb);
+  --dark: #0f172a;
+  --text: #1e293b;
+  --muted: #64748b;
+  --bg: #f8fafc;
+  --white: #ffffff;
+
+  /* Spacing */
+  --space-xs: 6px;
+  --space-sm: 12px;
+  --space-md: 20px;
+  --space-lg: 40px;
+  --space-xl: 80px;
+
+  /* Radius */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 999px;
+
+  /* Shadow */
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.08);
+  --shadow-lg: 0 20px 50px rgba(0,0,0,0.12);
+
+  /* Transition */
+  --transition: all 0.25s ease;
+}
+
+/* ===============================
+   GLOBAL
+================================= */
+.home {
+  padding-top: 90px;
+  font-family: "Inter", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* ===============================
+   HERO
+================================= */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f2027, #1c2e3a, #2c5364);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: var(--white);
+  padding: 0 var(--space-md);
+}
+
+.hero-text h1 {
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: var(--space-md);
+}
+
+.hero-text p {
+  max-width: 600px;
+  margin: auto;
+  font-size: 18px;
+  color: #cbd5f5;
+  margin-bottom: var(--space-lg);
+  line-height: 1.6;
+}
+
+/* ===============================
+   BUTTON SYSTEM (Unified)
+================================= */
+.btn {
+  padding: 12px 26px;
+  border-radius: var(--radius-full);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-block;
+}
+
+.btn-primary {
+  background: var(--primary-gradient);
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.6);
+  color: var(--white);
+}
+
+.btn-secondary:hover {
+  background: var(--white);
+  color: var(--dark);
+}
+
+/* ===============================
+   TRUST SECTION
+================================= */
+.trusted {
+  text-align: center;
+  padding: var(--space-xl) var(--space-md);
+  background: var(--bg);
+}
+
+.brands span {
+  margin: 0 var(--space-md);
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+/* ===============================
+   FEATURES
+================================= */
+.features {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+  padding: var(--space-xl) 8%;
+  text-align: center;
+}
+
+.feature {
+  max-width: 260px;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+
+.feature:hover {
+  background: var(--white);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-6px);
+}
+
+/* ===============================
+   PRODUCTS
+================================= */
+.products {
+  padding: var(--space-xl) 8%;
+  text-align: center;
+}
+
+.products h2 {
+  margin-bottom: var(--space-lg);
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.product-grid {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.product-card {
+  background: var(--white);
+  padding: var(--space-md);
+  width: 260px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+}
+
+.product-card button {
+  margin-top: var(--space-sm);
+  padding: 10px 16px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--primary-gradient);
+  color: var(--white);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.product-card button:hover {
+  transform: scale(1.05);
+}
+
+/* ===============================
+   TESTIMONIALS
+================================= */
+.testimonials {
+  background: var(--white);
+  padding: var(--space-xl) 8%;
+  text-align: center;
+}
+
+.testimonial-grid {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+.testimonial {
+  max-width: 300px;
+  font-style: italic;
+  color: var(--muted);
+  padding: var(--space-md);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+/* ===============================
+   CTA
+================================= */
+.cta {
+  padding: var(--space-xl) var(--space-md);
+  text-align: center;
+  background: var(--dark);
+  color: var(--white);
+}
+
+.cta button {
+  margin-top: var(--space-md);
+  padding: 14px 30px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--primary-gradient);
+  color: var(--white);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.cta button:hover {
+  transform: translateY(-3px);
+}
+
+/* ===============================
+   CATEGORY
+================================= */
+.category-section {
+  margin: var(--space-lg) 0 var(--space-xl);
+  text-align: center;
+}
+
+.category-btn {
+  padding: 8px 18px;
+  margin: var(--space-xs);
+  border-radius: var(--radius-full);
+  border: 1px solid #e2e8f0;
+  background: var(--white);
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.category-btn:hover,
+.category-btn.active {
+  background: var(--dark);
+  color: var(--white);
+  border: none;
+}
+
+/* ===============================
+   RESPONSIVE
+================================= */
+@media (max-width: 768px) {
+  .hero-text h1 {
+    font-size: 36px;
+  }
+
+  .features,
+  .testimonial-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .product-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+}
   transform: translateY(-2px);
 }
