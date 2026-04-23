@@ -22,12 +22,14 @@ import Orders from "./pages/Orders";
 
 // Lazy Pages
 const Home = lazy(() => import("./pages/Home"));
+const Products = lazy(() => import("./pages/Shop")); // ✅ ADDED
 const ProductDetail = lazy(() => import("./components/ProductDetail"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Profile = lazy(() => import("./pages/Profile"));
 const CartPage = lazy(() => import("./pages/CartPage"));
+const Offers = lazy(() => import("./pages/Offers"));
 
 /* =========================
    🔐 STRONG Protected Route
@@ -35,7 +37,6 @@ const CartPage = lazy(() => import("./pages/CartPage"));
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("accessToken");
 
-  // 🚨 If no token → redirect immediately
   if (!token) {
     return <Navigate to="/login" replace />;
   }
@@ -49,7 +50,6 @@ function ProtectedRoute({ children }) {
 function Layout() {
   const location = useLocation();
 
-  // cleaner logic
   const hideLayoutRoutes = ["/login", "/signup", "/forgot-password"];
   const hideLayout = hideLayoutRoutes.includes(location.pathname);
 
@@ -61,12 +61,14 @@ function Layout() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} /> {/* ✅ ADDED */}
+          <Route path="/offers" element={<Offers />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/signup" element={<Signup />} />
 
-          {/* Semi Protected (you can also protect these if needed) */}
+          {/* Semi Protected */}
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/orders" element={<Orders />} />
 

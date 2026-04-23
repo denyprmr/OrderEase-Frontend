@@ -41,8 +41,8 @@ function Navbar() {
 
       <ul className={`nav-links ${isOpen ? "active" : ""}`}>
         <li><Link to="/">Home</Link></li>
-        <li><Link to="#">Shop</Link></li>
-        <li><Link to="#">Offers</Link></li>
+        <li><Link to="/products">Shop</Link></li>
+        <li><Link to="/offers">Offers</Link></li>
         <li><Link to="#">Contact</Link></li>
 
         {/* 🛒 Cart Section */}
