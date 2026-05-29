@@ -1,18 +1,46 @@
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-function useCart() {
+import {
+  addItemToCart,
+  increaseQuantity,
+  decreaseQuantity,
+  removeItemFromCart,
+  clearCart,
+} from "../redux/slices/cartSlice";
 
-  const [cart, setCart] = useState([]);
+export const useCart = () => {
+  const dispatch = useDispatch();
 
-  const addToCart = (product) => {
-    setCart([...cart, product]);
+  const cart = useSelector(
+    (state) => state.cart
+  );
+
+  return {
+    ...cart,
+
+    addItemToCart: (product) =>
+      dispatch(addItemToCart(product)),
+
+    increaseQuantity: (foodId, currentQty) =>
+      dispatch(
+        increaseQuantity({
+          foodId,
+          currentQty,
+        })
+      ),
+
+    decreaseQuantity: (foodId, currentQty) =>
+      dispatch(
+        decreaseQuantity({
+          foodId,
+          currentQty,
+        })
+      ),
+
+    removeItemFromCart: (foodId) =>
+      dispatch(removeItemFromCart(foodId)),
+
+    clearCart: () =>
+      dispatch(clearCart()),
   };
-
-  const removeFromCart = (id) => {
-    setCart(cart.filter(item => item.id !== id));
-  };
-
-  return { cart, addToCart, removeFromCart };
-}
-
-export default useCart;
+};

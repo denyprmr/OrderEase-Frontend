@@ -1,16 +1,18 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { fetchProducts } from "../api/api";
-import { CartContext } from "../context/CartContext";
+import { useDispatch } from "react-redux";
+
+import { addItemToCart } from "../redux/slices/cartSlice";
 
 function ProductDetail() {
   const { id } = useParams();
-  const { addItemToCart } = useContext(CartContext);
+const dispatch = useDispatch();
   const [product, setProduct] = useState(null);
   
 const handleBuyNow = async () => {
   try {
-    await addItemToCart(product); // same logic as cart
+    await dispatch(addItemToCart(product)); // same logic as cart
     window.location.href = "/cart"; // redirect
   } catch (err) {
     console.error(err);

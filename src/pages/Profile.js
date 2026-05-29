@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { getProfile, updateProfile } from "../api/api";
 
 function Profile() {
-  const { user, logout } = useAuth();
+  const { user } = useSelector(
+  (state) => state.auth
+);
+  const [logout, setLogout] = useState(() => () => {});
   const navigate = useNavigate();
 
   const [profile, setProfile] = useState({
